@@ -11,15 +11,24 @@ function Calculator() {
         prevSelection.current = selection
     }, [selection]);
 
-    const buttonValues = ["%", "CE", "C", "DEL", "1/x","x2", "Sqrt", "\\", 7, 8, 9, "X",
+    const buttonValues = ["%", "CE", "C", "DEL", "1/x","^2", "Sqrt", "\\", 7, 8, 9, "X",
                             4, 5, 6, "-", 1, 2, 3, "+", "+/-", 0, ".", "="];
     
     function buttonPress(button) {
-        if (button != "=") {
+        
+        const operationButtons = [1,2,3,4,5,6,7,8,9,0,"+", "-", "\\", "Sqrt", "^2", "%", "1/x", "X"];
+
+        if (operationButtons.includes(button)) {
             setSelection((prevState) => [...prevState, button])
-        } else {
+        } else if (button === "C" || button === "CE") {
+            setSelection("");
+            setFinalAnswer(null);
+        } else if (button === "=") {
             handleEqual();
+        } else if (button === "DEL") {
+            setSelection(prevState => prevState.slice(0,-1));
         }
+
     }
 
     const handleEqual = () => {
@@ -51,15 +60,33 @@ function Calculator() {
         const firstNumber = Number(firstNum);
         const secondNumber = Number(secondNum);
 
+        console.log(operand)
         switch (operand) {
             case "+":
                 answer = firstNumber + secondNumber;
                 break;
+            case "-":
+                answer = firstNumber - secondNumber;
+                break;
+            case "X":
+                answer = firstNumber * secondNumber;
+                break;
+            case "^2":
+                answer = firstNumber * firstNumber;
+                break;
+            case "\\":
+                answer = firstNumber / secondNumber;
+                break;
+            case "1/x":
+                answer = 1 / firstNumber;
+                break;
+            case "Sqrt":
+                answer = Math.sqrt(firstNumber);
+                break;
+            case "%":
+                answer = firstNumber % secondNumber;
         }
 
-        console.log(firstNum);
-        console.log(typeof firstNum)
-        //setSelection(answer);
         setFinalAnswer(answer);
         setSelection("");
     }
@@ -67,8 +94,9 @@ function Calculator() {
     return (
         <div className="calculator-container">
             <div className="display">
-                {finalAnswer != null ? finalAnswer: selection}
-                
+                <h4>
+                    {finalAnswer != null ? finalAnswer: selection}
+                </h4>
             </div>
             <div className="buttons-section">
                 {buttonValues.map(button => {
@@ -79,6 +107,9 @@ function Calculator() {
                         </button> 
                     )
                 })}
+            </div>
+            <div className="please-clear">
+                <h5>For best results please hit C or CE after each operation</h5>
             </div>
         </div>
     )

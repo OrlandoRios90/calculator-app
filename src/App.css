@@ -21,3 +21,8 @@
 .equal {
   background-color: rgba(14, 14, 227, 0.553);
 }
+
+.please-clear {
+  width: 300px;
+  text-align: center;
+}
