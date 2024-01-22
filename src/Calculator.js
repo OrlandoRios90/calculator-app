@@ -16,7 +16,7 @@ function Calculator() {
     
     function buttonPress(button) {
         
-        const operationButtons = [1,2,3,4,5,6,7,8,9,0,"+", "-", "\\", "Sqrt", "^2", "%", "1/x", "X"];
+        const operationButtons = [1,2,3,4,5,6,7,8,9,0, "+", "-", "\\", "^2", "%", "X", "."];
 
         if (operationButtons.includes(button)) {
             setSelection((prevState) => [...prevState, button])
@@ -27,6 +27,10 @@ function Calculator() {
             handleEqual();
         } else if (button === "DEL") {
             setSelection(prevState => prevState.slice(0,-1));
+        } else if (button === "1/x") {
+            handleMath(selection, "1/x"); //testing this out
+        } else if (button === "Sqrt") {
+            handleMath(selection, "Sqrt");
         }
 
     }
@@ -40,27 +44,43 @@ function Calculator() {
         for (let value of selection) {
             if (typeof value === "number" && firstNumComplete === false) {
                 firstNum.push(value)
-            } else if (typeof value != "number") {
+            } else if (firstNumComplete === false && value === ".") {
+                firstNum.push(value)
+            } else if (typeof value != "number" && value != ".") {
                 operand = value;
                 firstNumComplete = true;
-            } else if (typeof value === "number" && firstNumComplete === true) {
+            } else if (typeof value === "number" && firstNumComplete) {
                 secondNum.push(value)
-            }
+            } else if (firstNumComplete && value === ".") {
+                secondNum.push(value)
+            } 
          }
         
         firstNum = firstNum.join("");
         secondNum = secondNum.join("");
-            
+        
         handleMath(firstNum, operand, secondNum);
         
     }
 
-    const handleMath = (firstNum, operand, secondNum) => {
+    const handleMath = (firstNum, operand, secondNum = "1") => {
         let answer;
-        const firstNumber = Number(firstNum);
-        const secondNumber = Number(secondNum);
+        let firstNumber;
+        let secondNumber;
 
-        console.log(operand)
+        if (Array.isArray(firstNum)) {
+            firstNum = firstNum.join("");
+        }
+        
+
+        if (firstNum.includes(".") || secondNum.includes(".")) {
+            firstNumber = parseFloat(firstNum);
+            secondNumber = parseFloat(secondNum);
+        } else {
+            firstNumber = Number(firstNum);
+            secondNumber = Number(secondNum);
+        }
+    
         switch (operand) {
             case "+":
                 answer = firstNumber + secondNumber;
